@@ -1,0 +1,5 @@
+Old/
+*.aux
+*.log
+*.pdf
+*.RData

@@ -1,0 +1,504 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Multiplicative domain poster
+% Created by Nathaniel Johnston
+% August 2009
+% http://www.nathanieljohnston.com/2009/08/latex-poster-template/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[final,plain]{beamer}
+\usepackage[size=custom,width=86.36,height=111.76]{beamerposter}
+\usepackage{graphicx}			% allows us to import images
+\usepackage{palatino}
+\usepackage{helvet}
+\usepackage{amsmath}
+\usepackage{booktabs}
+%\usepackage{mathpazo}
+
+%-----------------------------------------------------------
+% Custom commands that I use frequently
+%-----------------------------------------------------------
+
+\newcommand{\bb}[1]{\mathbb{#1}}
+\newcommand{\cl}[1]{\mathcal{#1}}
+\newcommand{\fA}{\mathfrak{A}}
+\newcommand{\fB}{\mathfrak{B}}
+\newcommand{\Tr}{{\rm Tr}}
+\newtheorem{thm}{Theorem}
+
+% added by ss
+\newcommand{\vect}{\hbox{vec}}
+\newcommand{\V}{\hbox{\sffamily var}}
+\renewcommand{\arraystretch}{1.1}
+%-----------------------------------------------------------
+% Define the column width and poster size
+% To set effective sepwid, onecolwid and twocolwid values, first choose how many columns you want and how much separation you want between columns
+% The separation I chose is 0.024 and I want 4 columns
+% Then set onecolwid to be (1-(4+1)*0.024)/4 = 0.22
+% Set twocolwid to be 2*onecolwid + sepwid = 0.464
+%-----------------------------------------------------------
+
+\newlength{\sepwid}
+\newlength{\onecolwid}
+\newlength{\twocolwid}
+\newlength{\threecolwid}
+
+\setlength{\sepwid}{0.015\paperwidth}
+\setlength{\onecolwid}{0.3\paperwidth}
+\setlength{\twocolwid}{0.464\paperwidth}
+\setlength{\threecolwid}{0.92\paperwidth}
+\setlength{\topmargin}{-0.5in}
+\usetheme{confposter}
+\usepackage{exscale}
+
+
+  
+%-----------------------------------------------------------
+% Define colours (see beamerthemeconfposter.sty to change these colour definitions)
+%-----------------------------------------------------------
+
+\setbeamercolor{block title}{fg=ngreen,bg=white}
+\setbeamercolor{block body}{fg=black,bg=white}
+\setbeamercolor{block alerted title}{fg=white,bg=dblue!70}
+\setbeamercolor{block alerted body}{fg=black,bg=dblue!10}
+
+%-----------------------------------------------------------
+% Name and authors of poster/paper/research
+%-----------------------------------------------------------
+
+\title{Genetic mapping of traits that are curves}
+%% \author{Hao Xiong, Evan H Goulding, Elaine J Carlson, Laurence H Tecott,
+%% Charles E McCulloch, and \'Saunak Sen,}
+\author{Hao Xiong\footnotemark[1], Evan H Goulding\footnotemark[2],
+  Elaine J Carlson\footnotemark[3], Laurence H Tecott\footnotemark[3],
+  Charles E McCulloch\footnotemark[1], and \'Saunak Sen\footnotemark[1]}
+
+\institute{\footnotemark[1]{\normalsize Department of Epidemiology and
+  Biostatistics, University of California, San Francisco, CA}
+\footnotemark[2]{\normalsize Department of Psychiatry and Behavioral Sciences,
+Northwestern University Feinberg School of Medicine, Chicago, IL}
+\footnotemark[3]{\normalsize Department of Psychiatry, 
+  University of California, San Francisco, CA}
+}
+
+%-----------------------------------------------------------
+% Start the poster itself
+%-----------------------------------------------------------
+% The \rmfamily command is used frequently throughout the poster to force a serif font to be used for the body text
+% Serif font is better for small text, sans-serif font is better for headers (for readability reasons)
+%-----------------------------------------------------------
+
+\begin{document}
+
+\begin{frame}[t]
+
+\begin{columns}[t]
+\begin{column}{\threecolwid}
+\begin{exampleblock}{\sffamily \LARGE Abstract}
+  {\Large Many traits of biological interest such as growth curves,
+    behavior patterns, and skeletal shape cannot be adequately summarized by a
+    single number. They have temporal or spatial structure and are
+    better treated as curves or {\em function-valued.}  We have
+    developed a fast and flexible genetic mapping method for such
+    function-valued traits.  It has wide applicability, specially if
+    the analyst is uncertain about the correlation structure of the
+    trait.  It is suitable for high-dimensional problems such as when
+    the number of time points or the number of genetic loci is large.
+    Our method was motivated by circadian mouse behavior data in a
+    backcross population.  Software in R and Python
+    are available.  }
+\end{exampleblock}
+\end{column}
+\end{columns}
+
+\begin{columns}[t]								
+  \begin{column}{\sepwid}\end{column}                 % empty spacer column
+  
+  \begin{column}{\onecolwid}
+    %% \begin{alertblock}{What are function-valued traits?}
+    %%   Traits such as growth curves, skeletal shape, and behavior
+    %%   patterns, that are not merely quantitative, but {\em curves},
+    %%   or {\em function valued}.  Also called dynamic traits, and
+    %%   infinite-dimensional traits.
+    %% \end{alertblock}
+    
+    \begin{alertblock}{What's special about mapping traits that are curves?}
+      \begin{itemize}
+        \item Some traits such as growth curves cannot be reduced to a
+          single number without compromising their meaning.
+          \item We take advantage of the temporal or spatial structure
+            in the data instead of considering them as a collection of
+            traits.
+          \item Treating such data as curves allows us to reduce the
+            effective dimension of the data.
+          \item Features such as rates of growth or periodic
+            fluctuations can be modeled naturally.
+      \end{itemize}
+    \end{alertblock}
+
+    \begin{block}{Motivating data: Circadian mouse behavior patterns}
+
+      Our method was motivated by a mouse behavior study using an
+      automated cage-monitoring system.  The data had features that 
+      required development of new methods.
+
+      A backcross population was generated by crossing C57BL/6J and
+      129S1/SvImJ strains. F$_1$ mice were crossed back to the
+      129S1/SvImJ strain to generate the 89 backcross mice that were
+      phenotyped and genotyped at 233 informative markers.
+      
+      The phenotype data are derived from a cage monitoring system
+      that automatically collected the data on each mouse for 16 days
+      (mouse acclimatized for 4 days, last 12 days data was
+      used). Mice in their home cages exhibit transitions between two
+      major distinct states: an active state (eating, drinking,
+      moving) and an inactive state (minimal movement).  The two
+      states were detected at a resolution of 10 milliseconds, and
+      aggregated into 6-minute bins across all analysis days.  The
+      resulting measure is called active state probability (ASP).
+
+    \end{block}
+
+
+    \begin{block}{Key features}
+      Our goal was to develop a method that can handle the following
+      features in the mouse behavior data.
+      \begin{itemize}
+      \item the number of measurements per individual (220) may exceed the
+        number of individuals (89)
+      \item distribution of the data hard to specify (eg. not normally
+        distributed, see Fig. 1)
+      \item mean and variance are smooth, but patterns nor easily
+        articulated (Fig. 2)
+      \item correlation between time points was also smooth but without
+        easily-articulated structure (Fig 3)
+      \end{itemize}
+      
+      We use a method based on {\em estimating equations} which and does not
+      require specification of mean, variance, or correlation structure.
+      
+    \end{block}
+
+  \end{column}
+
+  \begin{column}{\onecolwid}
+
+    \begin{block}
+
+      \begin{figure}
+        \begin{center}
+          {\sffamily \color{jblue} Fig. 1: Individual behavior trajectories are
+          quite variable}
+          \scalebox{1.4}{\includegraphics{figs/traj3}}\\
+          {\sffamily \color{jblue} Fig. 2: The average diurnal pattern}
+          \scalebox{1.4}{\includegraphics{figs/trajs}}\\
+          % \scalebox{1.4}{\includegraphics{figs/trajVar}}
+        \end{center}
+      \end{figure}
+    \end{block}
+
+    \begin{figure}
+      \begin{center}
+        {\sffamily \color{jblue} Fig. 3: Correlation structure has patterns but difficult to articulate}
+        \scalebox{1.4}{\includegraphics{figs/corr}}
+      \end{center}
+    \end{figure}
+
+  \end{column}
+
+%% \begin{block}{Simulation studies}
+      
+    %%   {
+    %%     \begin{tabular}{|r|ccc|ccc|ccc|}
+    %%       \hline
+    %%       & \multicolumn{9}{c|}{Covariance structure}\\
+    %%       \cline{2-10}
+    %%       & \multicolumn{3}{c|}{Gaussian, autoreg} & \multicolumn{3}{c|}{t, 4df, autoreg} & \multicolumn{3}{c|}{Gaussian, Mat\'ern}\\
+    %%       \cline{2-10}
+    %%       & \multicolumn{3}{c|}{Method} & \multicolumn{3}{c|}{Method} & \multicolumn{3}{c|}{Method}\\
+    %%       \hline
+    %%       Cutoff & Lik & EES & EE & Lik & EES & EE & Lik & EES & EE \\
+    %%       \hline
+    %%       \multicolumn{10}{|c|}{Neighbor correlation 0.61}\\\hline
+    %%       0.1   & 0.11  & 0.11  & 0.11  & 0.11  & 0.12  & 0.12  & 0.42  & 0.077 & 0.11 \\
+    %%       0.05  & 0.057 & 0.053 & 0.054 & 0.064 & 0.067 & 0.061 & 0.32  & 0.032 & 0.052\\
+    %%       0.01  & 0.013 & 0.011 & 0.011 & 0.016 & 0.014 & 0.010 & 0.19  & 0.007 & 0.010\\
+    %%       \hline
+    %%       \multicolumn{10}{|c}{Neighbor correlation 0.83}\\\hline   
+    %%       0.1   & 0.099 & 0.099 & 0.098 & 0.099 & 0.075 & 0.089 & 0.44  & 0.077 & 0.11 \\
+    %%       0.05  & 0.048 & 0.052 & 0.058 & 0.044 & 0.034 & 0.042 & 0.35  & 0.033 & 0.055\\
+    %%       0.01  & 0.015 & 0.010 & 0.013 & 0.006 & 0.007 & 0.008 & 0.20  & 0.009 & 0.015\\
+    %%       \hline
+    %%       % \multicolumn{10}{|c}{Neighbor correlation 0.94}\\\hline
+    %%       % 0.1   & 0.11  & 0.084 & 0.11  & 0.092 & 0.067 & 0.10  & 0.45  & 0.070 & 0.11 \\
+    %%       % 0.05  & 0.050 & 0.039 & 0.054 & 0.051 & 0.034 & 0.056 & 0.34  & 0.038 & 0.055\\
+    %%       % 0.01  & 0.012 & 0.006 & 0.011 & 0.013 & 0.004 & 0.008 & 0.18  & 0.009 & 0.012\\
+    %%       % \hline
+    %%     \end{tabular}
+    %%   }
+    %%   \medskip
+      
+    %%   Estimating equations without shrinkage (EE) maintains
+    %%   target Type-I error.  Likelihood (Lik) does not when misspecified.
+    %%   Estimating equations with shrinkage (EES) is slightly conservative.
+      
+    %% \end{block}
+    
+%%     \begin{block}{}
+%%       \begin{center}
+%%         % \scriptsize
+%%         % \begin{tabular}{r rcl rcl rcl}
+%%         % \toprule
+%%         % Neighbor correlation & \multicolumn{3}{c}{0.61} & \multicolumn{3}{c}{0.83} & \multicolumn{3}{c}{0.94}\\
+%%         % \cmidrule(rl){2-4}  \cmidrule(rl){5-7} \cmidrule(rl){8-10}
+%%         %   Error model & GA & tA & GM  &  GA  & tA & GM  &   GA  & tA  & GM \tabularnewline
+%%         % \midrule
+%%           %   Lik & 0.96 & 0.96 & 0.60 & 0.90 & 0.92 & 0.61 & 0.96 & 0.95  & 0.58\\ 
+%%           % {Methods \hspace{2em}}  EES & 0.92 & 0.90 & 0.74 & 0.76 & 0.81 & 0.75 & 0.89 & 0.90  & 0.72\\ 
+%%           %   EE  & 0.90 & 0.90 & 0.70 & 0.75 & 0.80 & 0.71 & 0.86 & 0.88  & 0.69\\
+%% % \bottomrule
+%% % \end{tabular}
+%%         \begin{tabular}{r rcl}
+%%           \toprule
+%%           Neighbor correlation & \multicolumn{3}{c}{0.61} \\
+%%           \cmidrule(rl){2-4}
+%%           Error model & GA & tA & GM  \tabularnewline
+%%           \midrule
+%%           Lik & 0.96 & 0.96 & 0.60 \\ 
+%%           {Methods \hspace{2em}}  EES & 0.92 & 0.90 & 0.74 \\ 
+%%           EE  & 0.90 & 0.90 & 0.70 \\
+%%           \bottomrule
+%%         \end{tabular}
+%%       \end{center}
+%%     \end{block}
+    
+
+  \begin{column}{\onecolwid}
+    
+    \begin{block}{Data analysis results}
+
+      We applied our method to the mouse behavior data using the
+      residual sum of squares statistic, using 1000 permutations to
+      establish significance.  We found two loci on
+      chromosomes 1 and 9 (Fig.~4).  The locus on chromosome 1 raises
+      activity levels in the early evening (Fig. 5).  By contrast, a
+      non-functional method that averages the data in different time
+      bins, found one locus (on chromosome 1). %% When we weight
+      %% by the inverse of the variance, we find three loci, on
+      %% chromosomes 1, 4, and 9. 
+
+      \begin{center}
+        {\sffamily \color{jblue} Fig. 4: Genome scan finds two loci}
+        \scalebox{1.4}{\includegraphics{figs/lodss}}\\ {\sffamily
+          \color{jblue} Fig. 5: Estimated effect of chromosome 1 locus}
+        \scalebox{1.4}{\includegraphics{figs/chr1effect}}
+      \end{center}
+    \end{block}
+    
+    
+    \begin{alertblock}{Why should you use our method?}
+      \begin{itemize}
+        \item If you have data that is better described as a curve,
+          you should consider methods that treat the data as such; our
+          method is an attractive choice.
+        \item Our method is fast (using a two-step least squares
+          approach), and easily paralellizable for permutations and
+          genome scans.
+        \item It does not require estimation of correlation structure,
+          and is robust to its misspecification.
+        \item R and Python code available at 
+      \\{\tt http://www.biostat.ucsf.edu/sen}.
+      \end{itemize}
+    \end{alertblock}
+
+  \end{column}
+  
+\begin{column}{\sepwid}
+  \end{column}                 % empty spacer column
+  
+\end{columns}
+
+\hrule
+
+%% \begin{columns}[t]
+%% \begin{column}{\twocolwid}
+%% \begin{exampleblock}{\Large Methods}
+%% Our method is based on an estimating equations framework
+%% \end{exampleblock}
+%% \end{column}
+%% \end{columns}
+
+%% \begin{center}
+%% {\Large \sffamily Methods}
+%% \end{center}
+
+\begin{columns}[t]
+\begin{column}{\sepwid}
+  \end{column}                 % empty spacer column
+
+    \begin{column}{\onecolwid}
+
+      \begin{alertblock}{Methods}
+        Our method uses estimating equations and offers an attractive
+        alternative to likelihood-based approaches.  It does not
+        require specification of the correlation structure and is
+        robust to its misspecification.  Estimation uses a fast
+        two-step least squares algorithm.  In principle, any basis
+        function family could be used to represent the mean function.
+      \end{alertblock}
+
+      \begin{block}{Data model}
+        Let $y(t)$ denote the function-valued trait.  We assume the
+        trait depends on covariates via a functional linear model as
+        follows
+        \begin{eqnarray}
+          y(t) &=& z_1\beta_1(t) + z_2\beta_2(t) + \ldots +
+          z_p\beta_p(t) + e(t) \nonumber\\&=& \sum_{k=1}^{p}
+          z_k\beta_k(t) + e(t), \label{eq:model}
+        \end{eqnarray}
+        where $z_k$, $k=1\cdots p$ are covariates, $\beta_k(t),$
+         $k=1\cdots p$, are unknown functions, and $e(t)$ is random
+         error.  We assume that each of the $\beta_k(t)$ functions can
+         be represented as a finite linear combination of a family of
+         basis functions (say splines, or Fourier series)
+         as follows
+         \begin{eqnarray}
+           \beta_k(t) &=& b_{k1}\psi_1(t) + b_{k2}\psi_2(t) + \ldots +
+           b_{kq}\psi_q(t) \;\;=\;\; \sum_{l=1}^{q} b_{kl}\psi_l(t),
+         \end{eqnarray}
+         where $q$ is the number of basis functions. 
+
+         Suppose there are $n$ individuals with $y_i(t)$ denoting the
+         functional trait for the $i$-th individual.  Further suppose
+         that the trait is observed at $m$ times $t_1, t_2, \ldots,
+         t_m$.  If we denote by $y_{ij}$ the trait value for the
+         $i$-th individual at $t_j$, then we can represent the
+         observed trait data as an $n \times m$ matrix
+
+         $$Y = [y_{ij}]_{n {\times} m}. $$ 
+
+
+         
+      \end{block}
+    \end{column}
+
+    \begin{column}{\onecolwid}
+
+      \begin{block}{}
+         Let $z_{ik}$ denote the
+         value of the $k$-th covariate in the $i$-th individual, let
+         $\psi_{jl}=\psi_l(t_j)$ be the value of the $l$-th basis
+         function at the $j$-th time point $t_j$, and let $e_{ij}$ be
+         the random error for the $i$-th individual at the $j$-th time
+         point. In matrix notation, We write
+         $$Z=[z_{ik}]_{n {\times} p}, \Psi=[\psi_{jl}]_{m {\times}q}
+         B=[b_{kl}]_{p {\times} q}, \hbox{ and } E=[e_{ij}]_{n
+           {\times} m}.$$
+
+         It can be shown that
+         \begin{equation}
+          Y = ZB\Psi^T + E.
+        \end{equation}
+        Writing $y=\vect(Y^T)$, $\epsilon=\vect(E^T)$, $\beta =
+        \vect(B^T)$, and $X = Z \otimes \Psi$, where $\otimes$ denotes
+        the Kronecker product and $\vect$ is an operator that stacks
+        columns of a matrix into a single, large column vector, the
+        above equation can be written in the familiar form $$y=X\beta
+        + \epsilon.$$ If the $n$ individuals are independent with
+        common covariance matrix then $\Lambda = \V(\epsilon) =
+        \V(\vect({E})) = I_n \otimes \Sigma,$ where $\Sigma$ is the
+        covariance matrix of $(e(t_1), e(t_2), \ldots, e(t_m))^T$.
+        Note that $\Sigma$ is, in general, unknown and must be
+        estimated from the data.
+      \end{block}
+  \begin{block}{Estimation and testing}
+
+    We minimize the residual sum of squares,
+    \begin{equation*}
+      \label{eq:resid}
+      S(\beta) = (y-\hat{y})^T(y-\hat{y}) = 
+      \vect(Y-\hat{Y})\vect(Y-\hat{Y})^T,\nonumber
+    \end{equation*}
+    where $\hat{y}=\vect(\hat{Y}^T)$ is an estimate depending on $\beta =
+    \vect(B^T)$.
+    \begin{equation}
+      \hat{B}^T = (\Psi^T\Psi)^{-1}\Psi^TY^TZ(Z^TZ)^{-1}. \label{eq:estim}
+    \end{equation}
+    
+    The variance of the estimate is
+    \begin{equation*}
+      \label{eq:tau}
+      \V(\hat{\beta}) = (Z^T Z)^{-1} \otimes 
+      \left( (\Psi^T \Psi)^{-1} \Psi^T \Sigma 
+      \Psi (\Psi^T \Psi)^{-1} \right) \equiv \tau.
+    \end{equation*}
+    The predictions are
+    \begin{equation}
+      \hat{Y}= \left( Z \left(Z^T Z\right)^{-1} Z^T \right) Y \left(
+      \Psi \left(\Psi^T \Psi\right)^{-1} \Psi^T \right).
+    \end{equation}
+    
+    %% follows a Hotelling's $T^2$ statistic with parameters $d$ and $r$
+    %% where $d$ is the degrees of freedom of the estimate of $\tau$
+    %% (equation (\ref{eq:tau})) and $r$ is the length of $\vect(B^T)$.
+    %% For reasonably large sample sizes, this can be approximated by a
+    %% $\chi^2$ statistic with $r$ degrees of freedom.
+
+  \end{block}
+    \end{column}
+    
+\begin{column}{\onecolwid}
+\begin{block}{}
+    The first test statistic we consider is the {\em quadratic form}
+    \begin{equation}
+      \vect(\hat{B}^T)^T \hat{\tau}^{-1}  \vect(\hat{B}^T)\label{eq:stat}
+    \end{equation}
+    has an approximate $\chi^2$ distribution with $r$ df.
+
+    The estimate of the covariance matrix $\tau$ is $$\hat{\tau} =
+    (Z^T Z)^{-1} \otimes \left( (\Psi^T \Psi)^{-1} \Psi^T \hat{\Sigma}
+    \Psi (\Psi^T \Psi)^{-1} \right),$$ where $\hat{\Sigma}$ is an
+    estimate of $\Sigma$.  For example, we can use residuals:
+    \begin{equation*}
+      \hat{\Sigma} = \frac{1}{n-p}\sum_{i=1}^n
+      (y_i-\hat{y}_i)(y_i-\hat{y}_i)^T .
+    \end{equation*}
+    Alternatively, biased, shrunk estimates can be considered.
+
+    The second test statistic we consider is the difference in {\em
+      residual sum of squares} between the model with the genetic
+    locus and a null model corresponding to the null hypothesis.
+    Thus, if $\hat{Y_0}$ denotes the fitted values from the null
+    model, and $\hat{Y_1}$ denotes the fitted values from the model
+    including the genetic locus under consideration, we would
+    calculate $S_i = \vect(Y{-}\hat{Y_i})^T \vect(Y{-}\hat{Y_i}),
+    i=[0,1],$ and then use \begin{equation} \frac{S_0-S_1}{S_1}
+    \end{equation}
+    as a test
+    statistic.  This statistic is closely connected to the proportion
+    of the variance explained by the locus. The asymptotic null
+    distribution of this statistic is a mixture of $\chi^2$ variables.
+    The mixing proportions depend on the eigenvalues of a matrix
+    depending on $\Psi$ and $\Sigma$.
+    \end{block}
+
+    \begin{block}{Contact}
+      \begin{minipage}{22em}
+      \'Saunak Sen \hspace{3em}\\ {\tt sen@biostat.ucsf.edu}\\
+      {\tt http://www.biostat.ucsf.edu/sen}
+      \end{minipage}
+      \begin{minipage}{5em}
+    \scalebox{1}{\includegraphics{sen-qrcode}}
+      \end{minipage}
+    \end{block}
+  
+
+\end{column}
+
+\begin{column}{\sepwid}
+  \end{column}                 % empty spacer column
+
+\end{columns}
+
+\end{frame}
+
+\end{document}
