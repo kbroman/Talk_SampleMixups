@@ -3,3 +3,4 @@ Old/
 *.log
 *.pdf
 *.RData
+*.out
