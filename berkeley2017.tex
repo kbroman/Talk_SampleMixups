@@ -9,6 +9,10 @@
 \usepackage[landscape,pdftex]{geometry}
 \usepackage{fancyhdr}
 \usepackage{wasysym} % for check symbol
+\usepackage{hyperref}
+\hypersetup{pdfpagemode=UseNone} % don't show bookmarks on initial view
+\definecolor{linkcolor}{rgb}{0.4,0.8,1}
+\hypersetup{colorlinks, urlcolor={linkcolor}} % default link color
 
 \DeclareOption{bigsym}{\DeclareSymbolFont{largesymbols}{OMX}{psycm}{m}{n}}
 \ProcessOptions
