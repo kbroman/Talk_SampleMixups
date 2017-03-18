@@ -3,12 +3,12 @@
 The compiled slides:
 [pdf](https://www.biostat.wisc.edu/~kbroman/presentations/anisci2013.pdf)
 
-*See the related paper*:
+Also see the related paper:
 
-Broman KW, Keller MP, Broman AT, Kendziorski C, Yandell BS, Sen Ś,
-Attie AD (2015) [Identification and correction of sample mix-ups in
-expression genetic data: A case study](https://www.ncbi.nlm.nih.gov/pubmed/26290572). G3 5:2177-2186
-[doi: 10.1534/g3.115.019778](http://doi.org/10.1534/g3.115.019778)
+- Broman KW, Keller MP, Broman AT, Kendziorski C, Yandell BS, Sen Ś,
+  Attie AD (2015) [Identification and correction of sample mix-ups in
+  expression genetic data: A case study](https://www.ncbi.nlm.nih.gov/pubmed/26290572). G3 5:2177-2186
+  [doi: 10.1534/g3.115.019778](http://doi.org/10.1534/g3.115.019778)
 
 
 ---
