@@ -1,5 +1,11 @@
-berkeley2017.pdf: berkeley2017.tex
+# R_OPTS: --vanilla without --no-environ
+R_OPTS=--no-save --no-restore --no-init-file --no-site-file
+
+berkeley2017.pdf: berkeley2017.tex Figs/data_fig.png
 	xelatex berkeley2017
+
+Figs/data_fig.png: R/data_fig.R
+	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 clean:
 	rm berkeley2017.pdf berkeley2017.out berkeley2017.log berkeley2017.aux
