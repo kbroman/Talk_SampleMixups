@@ -1,826 +1,412 @@
-\documentclass[12pt]{article}
+\documentclass[12pt,t]{beamer}
+\usepackage{graphicx}
+\setbeameroption{hide notes}
+\setbeamertemplate{note page}[plain]
+\usepackage{listings}
 
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage[dvips]{graphicx}
-\usepackage{eepic}
-\usepackage{color}
-\usepackage{wasysym} % \female \male
-\usepackage[landscape,pdftex]{geometry}
-\usepackage{fancyhdr}
-\usepackage{wasysym} % for check symbol
-\usepackage{hyperref}
-\hypersetup{pdfpagemode=UseNone} % don't show bookmarks on initial view
-\definecolor{linkcolor}{rgb}{0.4,0.8,1}
-\hypersetup{colorlinks, urlcolor={linkcolor}} % default link color
-
-\DeclareOption{bigsym}{\DeclareSymbolFont{largesymbols}{OMX}{psycm}{m}{n}}
-\ProcessOptions
-
-\setlength{\oddsidemargin}{-0.75in}
-\setlength{\evensidemargin}{-0.75in}
-\setlength{\topmargin}{-1in}
-\setlength{\textheight}{7.75in}
-\setlength{\textwidth}{10.5in}
-\setlength{\footskip}{0in}
-\setlength{\parindent}{0pt}
-\setlength{\rightskip}{0pt plus 1fil} % makes ragged right
-
-\renewcommand{\familydefault}{phv} % helvetica
-
-% following: color
-\definecolor{mybgcolor}{rgb}{0,0,0.3125}
-\definecolor{myyellow}{rgb}{1,1,0.4}
-\definecolor{myblue}{rgb}{0.4,0.8,1}
-\definecolor{mypink}{rgb}{1,0.4,1}
-\definecolor{myhotpink}{rgb}{1,0,0.5}
-\definecolor{mywhite}{rgb}{1,1,1}
-
-% following: B/W
-%\definecolor{mybgcolor}{rgb}{1,1,1}
-%\definecolor{myyellow}{rgb}{0,0,0}
-%\definecolor{myblue}{rgb}{0,0,0}
-%\definecolor{mypink}{rgb}{0,0,0}
-%\definecolor{myhotpink}{rgb}{0,0,0}
-%\definecolor{mywhite}{rgb}{0,0,0}
-
-% header/footer layout
-\pagestyle{fancy}
-\lhead{} \chead{} \rhead{}
-\lfoot{} \cfoot{} \rfoot{\color{myyellow} \thepage}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0pt}
-
-% font sizes
-\newcommand{\superlarge}{\fontsize{60}{60} \selectfont}
-\newcommand{\titlesize}{\fontsize{40}{50} \selectfont}
-\newcommand{\headsize}{\fontsize{35}{35} \selectfont}
-\newcommand{\textsize}{\fontsize{30}{35} \selectfont}
-\newcommand{\smallsize}{\fontsize{25}{30} \selectfont}
-\newcommand{\smallersize}{\fontsize{20}{25} \selectfont}
-\newcommand{\smallestsize}{\fontsize{18}{22} \selectfont}
-\newcommand{\evensmaller}{\fontsize{14}{18} \selectfont}
-\newcommand{\lod}{\text{LOD}}
-\newcommand{\bic}{\text{BIC}}
-\newcommand{\rss}{\text{RSS}}
-\newcommand{\var}{\text{var}}
-\newcommand{\M}{\text{M}}
-%\renewcommand{\log}{\text{log}}
-%\renewcommand{\max}{\text{max}}
+\input{Stuff/header.tex}
 
 
+\title{Salvaging a genetics project}
+\subtitle{Identifying and correcting \\
+  sample mix-ups in genetic data}
+\author{\href{http://kbroman.org}{Karl Broman}}
+\institute{Biostatistics \& Medical Informatics, UW{\textendash}Madison}
+\date{\href{http://kbroman.org}{\tt \scriptsize \color{foreground} kbroman.org}
+\\[-4pt]
+\href{http://github.com/kbroman}{\tt \scriptsize \color{foreground} github.com/kbroman}
+\\[-4pt]
+\href{https://twitter.com/kwbroman}{\tt \scriptsize \color{foreground} @kwbroman}
+}
 
-\pagecolor{mybgcolor}
-\color{mywhite}
 
 \begin{document}
 
-\thispagestyle{empty}
+{
+\setbeamertemplate{footline}{} % no page number here
+\frame{
+  \titlepage
 
-\begin{center}
-\titlesize \color{myyellow}
+\vspace{-40pt}
 
-\vspace*{10mm}
+\centerline{\href{http://bit.ly/berkeley2017}{\tt \scriptsize bit.ly/berkeley2017}}
 
-{\headsize Identifying and correcting sample mix-ups \\
-in high-dimensional genetic data}
+\vspace{-7mm}
+\hfill \includegraphics[height=6mm]{Figs/cc-zero.png}
 
-\color{mypink}
-\rule{10in}{1mm}
-%\vspace{-10mm}
-
-\vspace{10mm}
-
-\textsize \color{myblue}
-Karl W Broman
-\vspace{5mm}
-
-{\smallersize Biostatistics \& Medical Informatics,
-U Wisconsin -- Madison
-\vspace{20mm}
+\note{
+}
+} }
 
 
-\href{http://kbroman.org}{\tt kbroman.org} \\
-\href{https://github.com/kbroman}{\tt github.com/kbroman} \\
-\href{https://twitter.com/kwbroman}{\tt @kwbroman}
 
+\begin{frame}[c]{}
+
+\vspace*{-1mm} \hspace*{-2mm}
+\figw{Figs/inbredmice.jpg}{1.2}
+
+\note{
+I'll start with a bit of background.
+
+I focus on genetics problems, and particularly on mouse genetics.
+
+I think these are SWR mice; the photo is from David Threadgill.
 }
 
-\end{center}
+\end{frame}
 
 
-\newpage
-\thispagestyle{empty}
+\begin{frame}{}
 
-\vspace*{-0.85in}
-
-\centerline{\includegraphics[height=9in]{Figs/inbredmice.jpg}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Human vs mouse
-\end{minipage}
-
-\vspace{3cm}
+\vspace*{18mm}
 
 \centerline{
-\includegraphics[height=5in]{Figs/da-vinci-man.jpg}
-\includegraphics[height=5in]{Figs/vitruvian_mouse.jpg}
+\begin{minipage}[t]{50mm}
+\includegraphics[height=50mm]{Figs/da-vinci-man.jpg}
+\end{minipage}
+\hspace{15mm}
+\begin{minipage}[t]{50mm}
+\includegraphics[height=50mm]{Figs/vitruvian_mouse.jpg}
+\hspace{5mm}
+\href{http://daviddeen.com}{\scriptsize \lolit \tt daviddeen.com}
+\end{minipage}
 }
 
-{\color{myblue} \smallestsize \hfill \verb|www.daviddeen.com| \hspace*{11mm}}
+
+\note{
+Mice are not humans, but you can learn a great deal about human
+biology and disease from mice.
+
+The figure on the right is from David Deen.
+}
+
+\end{frame}
 
 
+\begin{frame}[c]{Intercross}
+
+\figh{Figs/intercross.pdf}{0.9}
+
+\note{
+  I've mostly focused on simple crosses between two inbred strains.
+
+  Say strain P$_1$ has low blood pressure and P$_2$ has high blood
+  pressure. We cross the two strains to get the F$_1$ hybrid, and then
+  intercross F$_1$ siblings to get a large set of F$_2$
+  individuals.
+
+  The F$_2$ mice may inherit a P$_1$ or P$_2$ chromosome
+  intact, but generally their chromosomes are a mosaic of the two
+  parental chromosomes as a result of recombination at meiosis.  The
+  points of exchange are called crossovers or recombination events.
+
+  At any one autosomal locus, the F$_2$ individuals will have genotype
+  BB, BR, or RR. We'd generate many such mice and then determine their
+  genotype along chromosomes as well as measure their phenotype (e.g.,
+  blood pressure). The simplest analyis is to look for genomic regions
+  where genotype is associated with phenotype.
+}
+\end{frame}
 
 
-\newpage
+\begin{frame}[c]{Genotype \& phenotype data}
 
-\headsize \color{myyellow}
-\hfill
-\begin{minipage}{5.75in}
-\centering
-Attie project
-\end{minipage}
+\hspace{0mm}
 
-\vspace{20mm}
+\figw{Figs/data_fig.png}{1.15}
 
-\hfill \begin{minipage}{10in}
+\note{
+  The data consist of genotypes at a set of markers across the genome,
+  plus some quantitative phenotype for each mouse. The goal is to
+  identify regions of the genome where the genotype is associated with
+  the phenotype.
+}
+\end{frame}
 
-\smallsize
-\color{mypink}
-$\sim$500 B6 $\times$ BTBR intercross mice, all ob/ob
 
-\smallersize
-\vspace{10mm}
-
-\hfill \begin{minipage}{9in}
-\color{mywhite}
-
-Genotypes at 2057 SNPs (Affymetrix arrays)
+\begin{frame}[c]{QTL mapping}
 
 \vspace{5mm}
+\only<1 | handout 0>{\figh{Figs/lodcurve_insulin.pdf}{0.85}}
+\only<2>{\figh{Figs/lodcurve_insulin_with_effects.pdf}{0.85}}
 
-Gene expression in six tissues (Agilent arrays)
+\note{
+  Our goal is to identify quantitative trait loci (QTL): regions of
+  the genome for which genotype is associated with the phenotype.
 
-{\color{myblue} \smallestsize
-\hspace{20mm} adipose
+  The basic analysis is to consider each locus, one at a time, split
+  the mice into the three genotype groups, and perform analysis of
+  variance.
 
-\hspace{20mm} gastrocnemius muscle
+  We then plot a test statistic that indicates the strength of the
+  genotype-phenotype association.  For historical reasons, we
+  calculate a LOD score as the test statistic: the log$_{10}$
+  likelihood ratio comparing the hypothesis that there's a QTL at that
+  position to the null hypothesis of no QTL anywhere.
 
-\hspace{20mm}  hypothalamus
-
-\hspace{20mm} pancreatic islets
-
-\hspace{20mm} kidney
-
-\hspace{20mm} liver
+  Large LOD scores indicate evidence for QTL and correspond to there
+  being a difference in the phenotype average for the three genotype
+  groups.
 }
-\vspace{5mm}
+\end{frame}
 
-Numerous clinical phenotypes
 
-{\color{myblue}  \smallestsize
-\hspace{20mm} (e.g., body weight, insulin and glucose
-levels)
-}
 
-%\vspace{5mm}
-%
-%Considerable brain power
-%
-%{\color{myblue} \smallestsize
-%\hspace{20mm} Alan Attie, Karl Broman, Aimee Teo Broman, Danielle Greenawalt,
-%
-%\hspace{20mm} Mark
-%Keller, Christina Kendziorski, Amit Kulkarni, Eric Schadt,
-%
-%\hspace{20mm} Brian
-%Yandell, \dots}
 
+\begin{frame}[c]{Attie project}
 
 
-\end{minipage}
+{\hilit
+$\sim$500 B6 $\times$ BTBR intercross mice, all ob/ob }
 
-\end{minipage}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Sex and the X chr
-\end{minipage}
-
-\vfill
-
-\begin{minipage}[t]{5.5in}
-\vspace*{0mm}
-
-\includegraphics{Figs/xchr_fig.pdf}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{4.8in}
-\vspace*{35mm}
-
-\smallersize
-\color{mywhite}
-
-
-
-\begin{tabular}{ll}
-F$_{\text{2}}$ females: & {\color{myblue} R/R or B/R} \\[18pt]
-F$_{\text{2}}$ males: & {\color{myblue} hemizygous B or R}
-\end{tabular}
-
-\end{minipage}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Genotype mix-ups
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/plate_errors.pdf}}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Sex and the X chr
-\end{minipage}
-
-\vfill
-
-\begin{minipage}[t]{5.5in}
-\vspace*{0mm}
-
-\includegraphics{Figs/xchr_fig.pdf}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{4.8in}
-\vspace*{35mm}
-
-\smallersize
-\color{mywhite}
-
-
-
-\begin{tabular}{ll}
-F$_{\text{2}}$ females: & {\color{myblue} R/R or B/R} \\[18pt]
-F$_{\text{2}}$ males: & {\color{myblue} hemizygous B or R}
-\end{tabular}
-
-\end{minipage}
-
-\newpage
-
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Strong eQTL
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eqtl_lod_1.pdf}}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Strong eQTL
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eqtl_lod_2.pdf}}
-
-\newpage
-
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs G
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve1a.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs G
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve1b.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-kNN classifier
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve1c.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs G
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve3a.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs G
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve3b.pdf}}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs G
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve2a.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs G
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve2b.pdf}}
-
-
-
-
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Basic scheme
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve_scheme_1.pdf}}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Basic scheme
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve_scheme_2.pdf}}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Basic scheme
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve_scheme_3.pdf}}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Basic scheme
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve_scheme_4.pdf}}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Prop'n mismatches
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics[height=6.5in]{Figs/distmatall.png}}
-
-\newpage
-
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Prop'n mismatches
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/distmat001.pdf}}
-
-\newpage
-
-
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Prop'n mismatches
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/distmat201.pdf}}
-
-\newpage
-
-
-
-
-%\headsize \color{myyellow}
-%\hfill \begin{minipage}{5.75in}
-%\centering
-%The diagonal
-%\end{minipage}
-%
-%\vfill
-%
-%\centerline{\includegraphics{Figs/distmatdiag.pdf}}
-%
-%\newpage
-
-
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Prop'n mismatches
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve_dist.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Decisions
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve_dist_byrow_left.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Genotype mix-ups
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/plate_errors.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Plate 1631
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics[width=10in]{Figs/plate_errors_1631.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Plates 1632 and 1630
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics[height=6.5in]{Figs/plate_errors_1632_n_1630.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Plate 1630
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics[width=10in]{Figs/plate_errors_1630.pdf}}
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_1.pdf}}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_2.pdf}}
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_3.jpg}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_3b.pdf}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_3c.pdf}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_3d.pdf}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_4.pdf}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_5.pdf}}
-
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_6.pdf}}
-
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_7.pdf}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_8.pdf}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_9.pdf}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_10.pdf}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs E
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eve_11.pdf}}
-
-
-
-
-\newpage
-
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Insulin QTL
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/insulin_lod.pdf}}
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Strong eQTL
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/eqtl_lod_3.pdf}}
-
-
-
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Summary
-\end{minipage}
-
-\vspace{3cm} \color{mywhite} \smallersize
-
-\hfill \begin{minipage}{10in}
+\vspace{6pt}
 
 \begin{itemize}
-\itemsep24pt
+\itemsep12pt
+\item Genotypes at 2057 SNPs (Affymetrix arrays)
+
+\item Gene expression in six tissues (Agilent arrays)
+
+  \begin{itemize}
+    \item adipose
+    \item gastrocnemius muscle
+    \item hypothalamus
+    \item pancreatic islets
+    \item kidney
+    \item liver
+  \end{itemize}
+
+\item Numerous clinical phenotypes
+  \begin{itemize}
+    \item[] (e.g., body weight, insulin and glucose levels)
+  \end{itemize}
+
+\end{itemize}
+
+\note{}
+
+\end{frame}
+
+
+
+
+\begin{frame}[c]{Sex and the X chr}
+\figh{Figs/xchr_fig.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Genotype mix-ups}
+\figw{Figs/plate_errors.pdf}{1.1}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Sex and the X chr}
+\figh{Figs/xchr_fig.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Strong eQTL}
+\only<1|handout 0>{\figh{Figs/eqtl_lod_1.pdf}{0.85}}
+\only<2>{\figh{Figs/eqtl_lod_2.pdf}{0.85}}
+\note{}
+\end{frame}
+
+
+
+
+\begin{frame}[c]{E vs G}
+\only<1|handout 0>{\figh{Figs/gve1a.pdf}{0.85}}
+\only<2>{\figh{Figs/gve1b.pdf}{0.85}}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{kNN classifier}
+\figh{Figs/gve1c.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs G}
+\only<1|handout 0>{\figh{Figs/gve3a.pdf}{0.85}}
+\only<2>{\figh{Figs/gve3b.pdf}{0.85}}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs G}
+\only<1|handout 0>{\figh{Figs/gve2a.pdf}{0.85}}
+\only<2>{\figh{Figs/gve2b.pdf}{0.85}}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Basic scheme}
+\only<1|handout 0>{\figh{Figs/gve_scheme_1.pdf}{0.85}}
+\only<2|handout 0>{\figh{Figs/gve_scheme_2.pdf}{0.85}}
+\only<3|handout 0>{\figh{Figs/gve_scheme_3.pdf}{0.85}}
+\only<4>{\figh{Figs/gve_scheme_4.pdf}{0.85}}
+\note{}
+\end{frame}
+
+\begin{frame}[c]{Prop'n mismatches}
+\figh{Figs/distmatall.png}{0.85}
+\note{}
+\end{frame}
+
+\begin{frame}[c]{Prop'n mismatches}
+\figh{Figs/distmat001.pdf}{0.85}
+\note{}
+\end{frame}
+
+\begin{frame}[c]{Prop'n mismatches}
+\figh{Figs/distmat201.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Prop'n mismatches}
+\figh{Figs/gve_dist.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Decisions}
+\figh{Figs/gve_dist_byrow_left.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Genotype mix-ups}
+\figh{Figs/plate_errors.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Plate 1631}
+\figh{Figs/plate_errors_1631.pdf}{0.65}
+\note{}
+\end{frame}
+
+\begin{frame}[c]{Plates 1632 and 1630}
+\figh{Figs/plate_errors_1632_n_1630.pdf}{0.85}
+\note{}
+\end{frame}
+
+\begin{frame}[c]{Plate 1630}
+\figh{Figs/plate_errors_1630.pdf}{0.65}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_1.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_2.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_3.jpg}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_3b.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_3c.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_3d.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_4.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_5.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_6.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_7.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_8.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_9.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_10.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{E vs E}
+\figh{Figs/eve_11.pdf}{0.85}
+\note{}
+\end{frame}
+
+\begin{frame}[c]{Insulin QTL}
+\figh{Figs/insulin_lod.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Strong eQTL}
+\figh{Figs/eqtl_lod_3.pdf}{0.85}
+\note{}
+\end{frame}
+
+
+\begin{frame}[c]{Summary}
+
+
+\begin{itemize}
+\itemsep12pt
 
 \item Sample mix-ups happen
 
 
-\item With eQTL data, we can both identify and {\color{mypink}
-  correct} mix-ups
+\item With eQTL data, we can both identify and {\hilit correct} mix-ups
 
 \item There is great value in having expression on multiple tissues
 
@@ -831,7 +417,6 @@ Summary
 
 \item Related work:
 
-\smallestsize \color{myblue}
 \begin{itemize}
 \item Westra et al. (2011) Bioinformatics 27:2104--2111
 \item Schadt et al. (2012) Nat Genet 44:603--608
@@ -841,176 +426,128 @@ Summary
 \end{itemize}
 
 \end{itemize}
-\end{minipage}
+\note{}
+\end{frame}
 
 
 
-\newpage
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Lessons
-\end{minipage}
-
-\vspace{20mm} \color{mywhite} \smallersize
-
-\hfill \begin{minipage}{10in}
+\begin{frame}[c]{Lessons}
 
 \begin{itemize}
-\itemsep24pt
+\itemsep12pt
 
 \item Don't fully trust anyone
-{\smallestsize \color{myblue}
 \begin{itemize}
 \item Including yourself
-\end{itemize} }
+\end{itemize}
 
 \item Make lots of plots
-{\smallestsize \color{myblue}
 \begin{itemize}
 \item Don't rely on summary statistics, like LOD scores
 \item Look at responses on the original scale
-\end{itemize} }
+\end{itemize}
 
 \item Follow up all aberrations
 
 \item Take your time with data cleaning
-{\smallestsize \color{myblue}
 \begin{itemize}
 \item A month, two months, a year?
-\end{itemize} }
-
-
-
+\end{itemize}
 
 \end{itemize}
-\end{minipage}
+\note{}
+\end{frame}
 
 
-\newpage
+\begin{frame}[c]{E vs G}
 
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs G
+\only<1>{transformed scale
 
-{\smallersize \color{mywhite} transformed scale}
-\end{minipage}
+ \vspace{5mm}
 
-\vfill
+\figh{Figs/gve1a_nqrank.pdf}{0.65}}
 
-\centerline{\includegraphics{Figs/gve1a_nqrank.pdf}}
+\only<2>{original scale
 
-\newpage
+ \vspace{5mm}
 
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-E vs G
+\figh{Figs/gve1a.pdf}{0.65}}
 
-{\smallersize \color{mywhite} original scale}
-\end{minipage}
+\note{}
+\end{frame}
 
-\vfill
 
-\centerline{\includegraphics{Figs/gve1a.pdf}}
 
-\newpage
 
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Lessons
-\end{minipage}
-
-\vspace{20mm} \color{mywhite} \smallersize
-
-\hfill \begin{minipage}{10in}
+\begin{frame}[c]{Lessons}
 
 \begin{itemize}
-\itemsep24pt
+\itemsep12pt
 
 \item Don't fully trust anyone
-{\smallestsize \color{myblue}
 \begin{itemize}
 \item Including yourself
-\end{itemize} }
+\end{itemize}
 
 \item Make lots of plots
-{\smallestsize \color{myblue}
 \begin{itemize}
 \item Don't rely on summary statistics, like LOD scores
 \item Look at responses on the original scale
-\end{itemize} }
+\end{itemize}
 
 \item Follow up all aberrations
 
 \item Take your time with data cleaning
-{\smallestsize \color{myblue}
 \begin{itemize}
 \item A month, two months, a year?
-\end{itemize} }
-
-
+\end{itemize}
 
 \end{itemize}
-\end{minipage}
+\note{}
+\end{frame}
 
-\newpage
 
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Acknowledgments
-\end{minipage}
 
-\vspace{2cm} \color{mywhite} \smallersize
 
-\hfill \begin{minipage}{10in}
+\begin{frame}[c]{Acknowledgments}
 
-\setlength{\tabcolsep}{5mm}
+\setlength{\tabcolsep}{2mm}
+{\footnotesize
 \begin{tabular}{lll}
 Alan Attie&&
-{\color{myblue} Biochemistry, UW--Madison} \\
+{\lolit Biochemistry, UW--Madison} \\
 Mark Keller &&
-\\[24pt]
+\\[10pt]
 
 Brian Yandell &&
-{\color{myblue} Statistics and Horticulture, UW--Madison} \\[24pt]
+{\lolit Statistics and Horticulture, UW--Madison} \\[10pt]
 
 Christina Kendziorski &&
-{\color{myblue} Biostatistics \& Medical Informatics, UW--Madison} \\
-Aimee Teo Broman && \\[24pt]
+{\lolit Biostat \& Medical Info, UW--Madison} \\
+Aimee Teo Broman && \\[10pt]
 
 Eric Schadt &&
-{\color{myblue} Pacific Biosciences of California} \\[24pt]
+{\lolit Mount Sinai} \\[10pt]
 
 Danielle Greenawalt &&
-{\color{myblue} Merck \& Co., Inc.} \\
-Amit Kulkarni && \\[24pt]
+{\lolit Merck \& Co., Inc.} \\
+Amit Kulkarni && \\[10pt]
 
 \'Saunak Sen &&
-{\color{myblue} UCSF} \\[48pt]
+{\lolit UT-Memphis} \\[20pt]
 
-\multicolumn{3}{l}{\color{mypink}NIH: \color{myblue} R01 GM074244, R01 DK066369}
+\multicolumn{3}{l}{\hilit NIH: \lolit R01 GM074244, R01 DK066369}
 
 
 \end{tabular}
-\end{minipage}
+}
 
-\newpage
+\note{}
+\end{frame}
 
-
-\headsize \color{myyellow}
-\hfill \begin{minipage}{5.75in}
-\centering
-Decisions
-\end{minipage}
-
-\vfill
-
-\centerline{\includegraphics{Figs/gve_dist_byrow.pdf}}
-
+\begin{frame}[c]{Decisions}
+\figh{Figs/gve_dist_byrow.pdf}{0.85}
+\note{}
+\end{frame}
 
 \end{document}
