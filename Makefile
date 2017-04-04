@@ -10,7 +10,8 @@ berkeley2017.pdf: berkeley2017.tex Figs/intercross.pdf        \
 								   Figs/gve1a.pdf             \
 								   Figs/gve_scheme_1.pdf      \
 								   Figs/distmat201.pdf        \
-								   Figs/gve_dist.pdf
+								   Figs/gve_dist.pdf          \
+								   Figs/eve_1.pdf
 	xelatex berkeley2017
 
 Figs/intercross.pdf: R/intercross_fig.R R/meiosis_func.R
@@ -41,6 +42,9 @@ Figs/distmat201.pdf: R/gve_image.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 Figs/gve_dist.pdf: R/gve_dist.R
+	cd R;R CMD BATCH $(R_OPTS) $(<F)
+
+Figs/eve_1.pdf: R/eve.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 clean:

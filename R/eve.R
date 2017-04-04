@@ -2,9 +2,12 @@
 # expression vs expression
 ######################################################################
 
-panel.cor <- 
-function(x, y, digits = 2, prefix = "", cex.cor, 
-         thecolors=c("gray40", color[2]), ...) 
+library(broman)
+library(lineup)
+
+panel.cor <-
+function(x, y, digits = 2, prefix = "", cex.cor,
+         thecolors=c("gray40", color[2]), ...)
 {
   usr <- par("usr")
   on.exit(par(usr))
@@ -17,6 +20,7 @@ function(x, y, digits = 2, prefix = "", cex.cor,
 }
 
 source("colors.R")
+bgcolor <- broman::brocolors("bg")
 
 file <- "eve.RData"
 if(file.exists(file)) {
@@ -34,7 +38,7 @@ if(file.exists(file)) {
 
   y1 <- cbind("Mouse3280\nislet"=islet.mlratio["Mouse3280",],
               "Mouse3280\nliver"=liver.mlratio["Mouse3280",])
-  
+
   thecor <- corbetw2mat(islet.mlratio[id$first,], liver.mlratio[id$second,])
 
   zisl <- islet.mlratio[id$first, thecor>0.75]
@@ -44,7 +48,7 @@ if(file.exists(file)) {
               "Mouse3281\nislet"=islet.mlratio["Mouse3281",thecor>0.75],
               "Mouse3280\nliver"=liver.mlratio["Mouse3280",thecor>0.75],
               "Mouse3281\nliver"=liver.mlratio["Mouse3281",thecor>0.75])
-  
+
   dil <- distee(islet.mlratio[,thecor>0.75], liver.mlratio[,thecor>0.75],
                 d.method="cor", labels=c("islet", "liver"))
 
@@ -53,11 +57,11 @@ if(file.exists(file)) {
               "Mouse3598\nliver"=liver.mlratio["Mouse3598",thecor>0.75],
               "Mouse3599\nliver"=liver.mlratio["Mouse3599",thecor>0.75])
 
-  y4 <- cbind("Mouse3295\nislet"=islet.mlratio["Mouse3295", thecor>0.75], 
-              "Mouse3296\nislet"=islet.mlratio["Mouse3296", thecor>0.75], 
-              "Mouse3295\nliver"=liver.mlratio["Mouse3295", thecor>0.75], 
-              "Mouse3296\nliver"=liver.mlratio["Mouse3296", thecor>0.75]) 
-              
+  y4 <- cbind("Mouse3295\nislet"=islet.mlratio["Mouse3295", thecor>0.75],
+              "Mouse3296\nislet"=islet.mlratio["Mouse3296", thecor>0.75],
+              "Mouse3295\nliver"=liver.mlratio["Mouse3295", thecor>0.75],
+              "Mouse3296\nliver"=liver.mlratio["Mouse3296", thecor>0.75])
+
   save(y1, y2, y3, y4, dil, zisl, zliv, file=file)
 }
 
@@ -121,7 +125,7 @@ dev.off()
 
 file <- "../Figs/eve_3.jpg"
 if(!file.exists(file)) {
-  jpeg(file, width=9, height=6.5, units="in", 
+  jpeg(file, width=9, height=6.5, units="in",
        pointsize=12, res=288)
   layout(cbind(c(1,1,2,2),c(4,3,3,5)))
 
@@ -139,7 +143,7 @@ if(!file.exists(file)) {
   mtext(side=1,"transcripts", line=1, cex=1.3, col=color[1])
   mtext(side=2,"mice", line=1, cex=1.3, col=color[1])
   rect(0,25,100,28,col=color[2],lend=1,ljoin=1)
-  
+
   par(cex.axis=1.3, cex.lab=1.8, col.lab=color[1])
   par(mar=c(5.1,5.1,4.1,0.1))
   plot(y1, xlab="islet expression", las=1,
@@ -170,7 +174,7 @@ rect(40,0,41.5,100,col=color[2],lend=1,ljoin=1)
 
 par(cex.axis=1.3, cex.lab=1.8, col.lab=color[1])
 par(mar=c(5.1,5.1,4.1,0.1))
-plot(zisl[,1], zliv[,1], xlab="islet expression", ylab="liver expression", 
+plot(zisl[,1], zliv[,1], xlab="islet expression", ylab="liver expression",
      las=1)
 mtext(side=3, line=1, paste("transcript", colnames(zisl)[1]), cex=1.8)
 
@@ -197,7 +201,7 @@ rect(83,0,84.5,100,col=color[2],lend=1,ljoin=1)
 
 par(cex.axis=1.3, cex.lab=1.8, col.lab=color[1])
 par(mar=c(5.1,5.1,4.1,0.1))
-plot(zisl[,27], zliv[,27], xlab="islet expression", ylab="liver expression", 
+plot(zisl[,27], zliv[,27], xlab="islet expression", ylab="liver expression",
      las=1)
 mtext(side=3, line=1, paste("transcript", colnames(zisl)[27]), cex=1.8)
 dev.off()
@@ -385,7 +389,7 @@ dev.off()
 pdf("../Figs/eve_corr.pdf", width=9, height=6.5, pointsize=12, onefile=TRUE)
 par(fg="white", col="white", col.axis="white", col.lab=color[1], bg=bgcolor)
 par(mfrow=c(2,1), mar=c(5.1,0.1,0.1,0.1))
-pd <- pulldiag(dil) 
+pd <- pulldiag(dil)
 hist(pd, breaks=seq(-1, 1, len=101), ylab="", xlab="islet : liver correlation", main="", yaxt="n")
 rug(pd[pd<0.7], col=color[2], lwd=1.3)
 u <- par("usr")
@@ -393,7 +397,7 @@ text(u[1]+diff(u[1:2])*0.05, mean(u[3:4]), "Self-self", col=color[1],
      adj=c(0,0.5), cex=1.5)
 segments(-1, u[3], 1, u[3], xpd=TRUE, lend=1, ljoin=1)
 
-od <- omitdiag(dil) 
+od <- omitdiag(dil)
 hist(od, breaks=seq(-1, 1, len=101), ylab="", xlab="islet : liver correlation", main="", yaxt="n")
 rug(od[od > 0.7], col=color[2], lwd=1.3)
 u <- par("usr")
@@ -403,4 +407,3 @@ segments(-1, u[3], 1, u[3], xpd=TRUE, lend=1, ljoin=1)
 dev.off()
 
 rm(list=ls())
-
