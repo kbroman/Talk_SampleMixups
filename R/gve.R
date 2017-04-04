@@ -2,8 +2,10 @@
 # eQTL genotype vs expression
 ######################################################################
 
-source("colors.R")
+library(qtl)
 
+source("colors.R")
+bgcolor <- broman::brocolors("bg")
 
 file <- "gve.RData"
 if(file.exists(file)) {
@@ -16,7 +18,7 @@ if(file.exists(file)) {
   attach("~/Projects/Attie/GoldStandard/LiningUp/Data/F2.mlratio.islet.RData")
 
   phenam <- sapply(attr(dgenovi, "y"), colnames)
- 
+
   wh1 <- which(locallod.i == max(locallod.i)) # 499541 (1259) LOD = 165.5
   e1 <- names(wh1)
   chr1 <- strsplit(names(which(sapply(phenam, function(a,b) b %in% a, e1))),"@")[[1]][1]
@@ -54,7 +56,7 @@ if(file.exists(file)) {
 pdf("../Figs/gve1a.pdf", width=9, height=6.5, pointsize=12, onefile=TRUE)
 par(mar=c(4.1,5.1,0.1,0.1), fg="white", col="white", col.axis="white", col.lab=color[1],
     bg=bgcolor, cex.axis=1.2, cex.lab=1.3, las=1)
-plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n", 
+plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n",
      xlim=c(0.75,3.25), ylim=range(y1))
 set.seed(47500621)
 u <- runif(length(y1), -0.1, 0.1)
@@ -67,7 +69,7 @@ pdf("../Figs/gve1a_nqrank.pdf", width=9, height=6.5, pointsize=12, onefile=TRUE)
 par(mar=c(4.1,5.1,0.1,0.1), fg="white", col="white", col.axis="white", col.lab=color[1],
     bg=bgcolor, cex.axis=1.2, cex.lab=1.3, las=1)
 y1nqr <- nqrank(y1)
-plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n", 
+plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n",
      xlim=c(0.75,3.25), ylim=range(y1nqr))
 set.seed(47500621)
 u <- runif(length(y1nqr), -0.1, 0.1)
@@ -84,7 +86,7 @@ m <- m[!is.na(m)]
 pdf("../Figs/gve1b.pdf", width=9, height=6.5, pointsize=12, onefile=TRUE)
 par(mar=c(4.1,5.1,0.1,0.1), fg="white", col="white", col.axis="white", col.lab=color[1],
     bg=bgcolor, cex.axis=1.2, cex.lab=1.3, las=1)
-plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n", 
+plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n",
      xlim=c(0.75,3.25), ylim=range(y1), las=1)
 points(g[,1]+u, y1, lwd=2, col="gray40")
 points((g[,1]+u)[m], y1[m], bg=color[2], col="white", lwd=1, pch=21)
@@ -95,7 +97,7 @@ dev.off()
 pdf("../Figs/gve1c.pdf", width=9, height=6.5, pointsize=12, onefile=TRUE)
 par(mar=c(4.1,5.1,0.1,0.1), fg="white", col="white", col.axis="white", col.lab=color[1],
     bg=bgcolor, cex.axis=1.2, cex.lab=1.3, las=1)
-plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n", 
+plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n",
      xlim=c(0.75,3.25), ylim=range(y1))
 require(class)
 g1i <-  knn(cbind(y1), cbind(y1), g[,1], k=40, l=33)

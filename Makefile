@@ -6,7 +6,8 @@ berkeley2017.pdf: berkeley2017.tex Figs/intercross.pdf        \
 								   Figs/lodcurve_insulin.pdf  \
 								   Figs/xchr_fig.pdf          \
 								   Figs/plate_errors.pdf      \
-								   Figs/eqtl_lod_1.pdf
+								   Figs/eqtl_lod_1.pdf        \
+								   Figs/gve1a.pdf
 	xelatex berkeley2017
 
 Figs/intercross.pdf: R/intercross_fig.R R/meiosis_func.R
@@ -25,6 +26,9 @@ Figs/plate_errors.pdf: R/xchr_fig.R R/plot_plates.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 Figs/eqtl_lod_1.pdf: R/eQTL_LOD.R
+	cd R;R CMD BATCH $(R_OPTS) $(<F)
+
+Figs/gve1a.pdf: R/gve.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 clean:
