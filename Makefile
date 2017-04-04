@@ -1,7 +1,12 @@
 # R_OPTS: --vanilla without --no-environ
 R_OPTS=--no-save --no-restore --no-init-file --no-site-file
 
-berkeley2017.pdf: berkeley2017.tex Figs/intercross.pdf Figs/data_fig.png Figs/lodcurve_insulin.pdf Figs/xchr_fig.pdf Figs/plate_errors.pdf
+berkeley2017.pdf: berkeley2017.tex Figs/intercross.pdf        \
+								   Figs/data_fig.png          \
+								   Figs/lodcurve_insulin.pdf  \
+								   Figs/xchr_fig.pdf          \
+								   Figs/plate_errors.pdf      \
+								   Figs/eqtl_lod_1.pdf
 	xelatex berkeley2017
 
 Figs/intercross.pdf: R/intercross_fig.R R/meiosis_func.R
@@ -17,6 +22,9 @@ Figs/xchr_fig.pdf: R/xchr_fig.R R/meiosis_func.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 Figs/plate_errors.pdf: R/xchr_fig.R R/plot_plates.R
+	cd R;R CMD BATCH $(R_OPTS) $(<F)
+
+Figs/eqtl_lod_1.pdf: R/eQTL_LOD.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 clean:
