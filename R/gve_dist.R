@@ -1,14 +1,16 @@
 ######################################################################
 # distribution of proportion of mismatches
 ######################################################################
+library(lineup)
 source("colors.R")
+bgcolor <- broman::brocolors("bg")
 
 attach("~/Projects/Attie/GoldStandard/LiningUp/Data/genodist_t.RData")
 
 pdf("../Figs/gve_dist.pdf", width=9, height=6.5, pointsize=12, onefile=TRUE)
 par(fg="white", col="white", col.axis="white", col.lab="white", bg=bgcolor)
 par(mfrow=c(2,1), mar=c(5.1,0.1,0.1,0.1))
-pd <- pulldiag(totd) 
+pd <- pulldiag(totd)
 hist(pd, breaks=seq(0, 1, len=201), ylab="", xlab="Proportion of mismatches", main="", yaxt="n")
 rug(pd[pd>0.2], col=color[2], lwd=1.3)
 u <- par("usr")
@@ -16,7 +18,7 @@ text(u[2]-diff(u[1:2])*0.05, mean(u[3:4]), "Self-self", col=color[1],
      adj=c(1,0.5), cex=1.5)
 segments(0, u[3], 1, u[3], xpd=TRUE, lend=1, ljoin=1)
 
-od <- omitdiag(totd) 
+od <- omitdiag(totd)
 hist(od, breaks=seq(0, 1, len=201), ylab="", xlab="Proportion of mismatches", main="", yaxt="n")
 rug(od[od < 0.2], col=color[2], lwd=1.3)
 u <- par("usr")
