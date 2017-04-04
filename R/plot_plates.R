@@ -79,6 +79,7 @@ rownames(split.controlplatenum) <- names(controlplatenum)
 ######################################################################
 
 source("colors.R")
+bgcolor <- broman::brocolors("bg")
 
 pdf("../Figs/plate_errors.pdf", height=6.5, width=10, pointsize=10)
 par(mar=rep(0,4), bg=bgcolor, col="white", col.axis="white")
@@ -121,7 +122,7 @@ for(pl in 1:7) {
 
 z <- corrected.fullplatenum[!is.na(corrected.fullplatenum)]
 z <- split.fullplatenum[-c(nogeno, noexpr),][is.na(match(fullplatenum[-c(nogeno, noexpr)], z)),]
-for(i in 1:nrow(z)) 
+for(i in 1:nrow(z))
   points(plx1[match(z[i,1], plates)] + colx[z[i,3]],
          ply1[match(z[i,1], plates)] + rowy[z[i,2]], cex=1.5, pch=4, col=color[2], lwd=2)
 
@@ -137,21 +138,21 @@ wh <- which(!is.na(corrected.fullplatenum) & corrected.fullplatenum != fullplate
 z <- split.corrected.fullplatenum
 z <- z[,1]*12*8 + z[,3]*8 + z[,2]
 thearrows <- names(corrected.fullplatenum[wh][order(z[wh])])
-arrowcol[thearrows] <- color[c(4,6,7)]
+suppressWarnings(arrowcol[thearrows] <- color[c(4,6,7)])
 
 
 for(i in 1:nrow(split.corrected.fullplatenum)) {
   z <- split.corrected.fullplatenum[i,]
   if(is.na(z[1])) next
 
-  if(fullplatenum[i] == corrected.fullplatenum[i]) 
+  if(fullplatenum[i] == corrected.fullplatenum[i])
     points(plx1[match(z[1], plates)] + colx[z[3]],
            ply1[match(z[1], plates)] + rowy[z[2]], pch=16, cex=0.8, col="white")
 }
 
 tab <- table(corrected.fullplatenum)
 z <- split.corrected.fullplatenum[!is.na(match(corrected.fullplatenum,names(tab)[tab==2])),]
-for(i in 1:nrow(z)) 
+for(i in 1:nrow(z))
   points(plx1[match(z[i,1], plates)] + colx[z[i,3]],
          ply1[match(z[i,1], plates)] + rowy[z[i,2]], cex=1.2, col=color[2])
 
@@ -159,7 +160,7 @@ for(i in 1:nrow(z))
 for(i in 1:nrow(split.corrected.fullplatenum)) {
   z <- split.corrected.fullplatenum[i,]
   if(is.na(z[1])) next
-  
+
   if(fullplatenum[i] != corrected.fullplatenum[i]) {
     zz <- split.fullplatenum[i,]
     arrows(plx1[match(z[1], plates)] + colx[z[3]],
@@ -174,10 +175,10 @@ for(i in 1:nrow(split.corrected.fullplatenum)) {
            col=arrowcol[i], lwd=1, lend=1, ljoin=1)
   }
 }
-           
+
 tab <- table(corrected.fullplatenum)
 z <- split.corrected.fullplatenum[!is.na(match(corrected.fullplatenum,names(tab)[tab==2])),]
-for(i in 1:nrow(z)) 
+for(i in 1:nrow(z))
   segments(plx1[match(z[i,1], plates)] + colx[z[i,3]]-diff(colx[1:2])*0.1,
            ply1[match(z[i,1], plates)] + rowy[z[i,2]],
            plx1[match(z[i,1], plates)] + colx[z[i,3]]+diff(colx[1:2])*0.1,
