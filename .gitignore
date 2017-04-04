@@ -4,3 +4,6 @@ Old/
 *.pdf
 *.RData
 *.out
+*.nav
+*.snm
+*.toc
