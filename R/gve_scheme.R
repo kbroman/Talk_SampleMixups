@@ -3,7 +3,7 @@
 ######################################################################
 
 source("colors.R")
-
+bgcolor <- broman::brocolors("bg")
 
 
 
@@ -99,4 +99,3 @@ mtext(side=1,"eQTL", line=1, cex=1.3, col=color[1])
 mtext(side=2,"mice", line=1, cex=1.3, col=color[1])
 rect(0,65,100,68,col=color[4],lend=1,ljoin=1)
 dev.off()
-
