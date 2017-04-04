@@ -5,7 +5,7 @@ library(qtl)
 
 png("../Figs/data_fig.png", height=1000, width=1500, pointsize=28)
 
-bgcolor <- broman::brocolors("bgpng")
+bgcolor <- broman::brocolors("bg")
 par(bg=bgcolor, col.main="white", col="white",
     fg="white", col.lab="white", col.axis="white")
 
