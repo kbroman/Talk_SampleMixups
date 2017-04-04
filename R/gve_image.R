@@ -7,7 +7,7 @@ whc <- match(1:ncol(totd), id$second)
 totdo <- matrix(ncol=ncol(totd), nrow=nrow(totd))
 dimnames(totdo) <- list(c(rownames(totd)[id$first], rownames(totd)[is.na(whr)]),
                         c(colnames(totd)[id$second], colnames(totd)[is.na(whc)]))
-for(i in 1:nrow(totdo)) 
+for(i in 1:nrow(totdo))
   totdo[i,] <- totd[rownames(totdo)[i], colnames(totdo)]
 
 
@@ -15,7 +15,8 @@ source("colors.R")
 bluepal <- colorRampPalette(c("blue","white"))
 redpal <- colorRampPalette(c("white","red"))
 col <- c(bluepal(100), redpal(412))
-
+bgcolor <- broman::brocolors("bg")
+bgcolorpng <- broman::brocolors("bg")
 
 
 pdf("../Figs/distmat201.pdf", width=7.5, height=6.5, pointsize=12, onefile=TRUE)
