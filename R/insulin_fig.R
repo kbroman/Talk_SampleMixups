@@ -1,4 +1,8 @@
+library(qtl)
+
 source("colors.R")
+color <- broman::brocolors("crayons")[c("Cornflower", "Blush")]
+bgcolor <- broman::brocolors("bg")
 
 file <- "insulin_lod.RData"
 if(file.exists(file)) {
