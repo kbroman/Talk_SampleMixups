@@ -59,7 +59,7 @@ bad <- rn[rn != thecall]
 bad <- bad[is.na(match(bad, notfound))]
 
 pdf("../Figs/gve_dist_byrow.pdf", width=10, height=6.5, pointsize=12, onefile=TRUE)
-par(fg="white", col="white", col.axis="white", col.lab="white", bg=bgcolor)
+par(fg="white", col="white", col.axis="white", col.lab="white", bg=bgcolor, pty="s")
 par(mfrow=c(1,2), las=1)
 plot(minrow, selfrow, xlab="minimum distance", ylab="self-self distance", type="n",
      ylim=c(0,0.84), xlim=c(0,0.84))
@@ -83,7 +83,7 @@ points(minrow[bad], nextbestrow[bad], col=color[4], lwd=2)
 dev.off()
 
 pdf("../Figs/gve_dist_byrow_left.pdf", width=9, height=6.5, pointsize=12, onefile=TRUE)
-par(fg="white", col="white", col.axis="white", col.lab="white", bg=bgcolor)
+par(fg="white", col="white", col.axis="white", col.lab="white", bg=bgcolor, pty="s")
 par(las=1)
 plot(minrow, selfrow, xlab="minimum distance", ylab="self-self distance", type="n",
      ylim=c(0,0.84), xlim=c(0,0.84))
