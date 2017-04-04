@@ -26,14 +26,14 @@ f2g$pheno <- cbind(f2g$pheno, insulin=phe[id$second,2])
 layout(cbind(1,2), width=c(1, 0.12))
 
 color <- c(bgcolor, broman::brocolors("crayons")[c("Cornflower", "Dandelion", "Blush")])
-par(mar=c(5.1,4.1,3.6,0.6))
+par(mar=c(5.1,4.1,2.6,0.6))
 names(f2g$geno)[20] <- ""
 geno.image(f2g, col=color, main="", ylab="Mice", reorder=nphe(f2g))
 u <- par("usr")
 axis(side=3, at=u[2], labels="X", xpd=TRUE, line=-0.5)
 
 y <- log10( f2g$pheno$insulin[order(f2g$pheno$insulin)] )
-par(mar=c(5.1,1.8,3.6,1.8))
+par(mar=c(5.1,1.8,2.6,1.8))
 
 ramp <- c(colorRampPalette(c(broman::brocolors("crayons")["Cornflower"], "white"))(128),
           colorRampPalette(c("white",broman::brocolors("crayons")["Blush"]))(128)[-1])
