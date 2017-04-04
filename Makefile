@@ -1,8 +1,11 @@
 # R_OPTS: --vanilla without --no-environ
 R_OPTS=--no-save --no-restore --no-init-file --no-site-file
 
-berkeley2017.pdf: berkeley2017.tex Figs/data_fig.png
+berkeley2017.pdf: berkeley2017.tex Figs/intercross.pdf Figs/data_fig.png
 	xelatex berkeley2017
+
+Figs/intercross.pdf: R/intercross_fig.R R/meiosis_func.R
+	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 Figs/data_fig.png: R/data_fig.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
