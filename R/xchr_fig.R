@@ -2,8 +2,10 @@
 # illustration of the X chromosome
 ######################################################################
 
-source("colors.R")
-source("func.R")
+source("meiosis_func.R")
+
+bgcolor <- broman::brocolors("bg")
+color <- broman::brocolors("crayons")[c("Cornflower", "Blush")]
 
 pdf("../Figs/xchr_fig.pdf", width=5, height=6.5, pointsize=12, onefile=TRUE)
 par(mar=rep(0.1,4), fg="white", col="white", col.axis="white", col.lab="white",
