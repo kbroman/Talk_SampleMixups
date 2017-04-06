@@ -1,11 +1,14 @@
 load("calls.RData")
 
 # colors
-maincolor <- "#FEEB96"
+maincolor <- broman::brocolors("web")["yellow"]
 bgcolor <- broman::brocolors("bg")
 fgcolor <- "white"
 dotcolor <- "white"
 gray <- "gray40"
+purple <- broman::brocolors("web")["purple"]
+green <- broman::brocolors("web")["green"]
+orange <- broman::brocolors("web")["orange"]
 
 calls <- sub("\\*", "", calls)
 
@@ -119,7 +122,7 @@ for(pl in 1:7) {
                   ply1[pl] + rowy[i] - diff(rowy[1:2])*0.6,
                   plx1[pl] + colx[j],
                   ply1[pl] + rowy[i],
-                  sh.col="orange", curve=0,
+                  sh.col=orange, curve=0,
                   size=0.6, width=1, h.lwd=1, sh.lwd=2)
 
         }
@@ -147,7 +150,7 @@ for(i in 1:nrow(z)) {
           ply1[match(z[i,1], plates)] + rowy[z[i,2]],
           plx1[match(z[i,1], plates)] + colx[z[i,3]] + mult*diff(colx[1:2])*0.4,
           ply1[match(z[i,1], plates)] + rowy[z[i,2]] + diff(rowy[1:2])*0.6,
-          sh.col=c("green3", "purple")[lost.hasexpr[i]+1], curve=0,
+          sh.col=c(green, purple)[lost.hasexpr[i]+1], curve=0,
           size=0.6, width=1, h.lwd=1, sh.lwd=2)
 }
 
@@ -207,7 +210,7 @@ if(file.exists(file)) {
   arrowinfo <- arrowinfo[1:(curarrow-1),]
   write.csv(arrowinfo, file=file, quote=FALSE, row.names=FALSE)
 }
-arrowcolors <- c(rgb(0,0,1), rgb(0.4, 0.4, 1), rgb(0.7, 0.7, 1))
+arrowcolors <- c(rgb(0.4,0.4,1), rgb(0.6, 0.6, 1), rgb(0.8, 0.8, 1))
 arrowinfo[,4] <- arrowcolors[arrowinfo[,4]]
 
 # the arrows
@@ -251,10 +254,3 @@ for(i in 1:nrow(z))
 
 
 dev.off()
-
-######################################################################
-## study the purple X's (lost samples)
-#lost <- rownames(calls)[lost]
-#has.expr <- apply(calls, 2, function(a,b) match(b, a), lost)
-#has.expr <- lost[rowSums(!is.na(has.expr)) > 0]
-#cbind(ts.plate, ts.well)[match(has.expr, ts.mousenum),]
