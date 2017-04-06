@@ -28,7 +28,7 @@ Figs/lodcurve_insulin.pdf: R/lodcurve_insulin.R
 Figs/xchr_fig.pdf: R/xchr_fig.R R/meiosis_func.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
-Figs/plate_errors.pdf: R/xchr_fig.R R/plot_plates.R
+Figs/plate_errors.pdf: R/plot_plates.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 Figs/eqtl_lod_1.pdf: R/eQTL_LOD.R
