@@ -75,12 +75,13 @@ rownames(split.controlplatenum) <- names(controlplatenum)
 pdf("../Figs/plate_errors.pdf", height=6.5, width=10, pointsize=10)
 
 par(mar=rep(0,4), bty="n")
-par(bg=bgcolor, col=fgcolor, col.axis=fgcolor)
+par(bg=bgcolor, fg=fgcolor, col=fgcolor, col.axis=fgcolor)
 
-xoff <- 5
+xoff <- 0
 yoff <- 2
-plot(0,0,type="n", xlab="", ylab="", xlim=c(0,98), ylim=c(53.5,-0.5),
-     xaxt="n", yaxt="n", )
+par(bty="n")
+plot(0,0,type="n", xlab="", ylab="", xlim=c(-xoff,142+xoff), ylim=c(38+yoff,-yoff),
+     xaxt="n", yaxt="n")
 
 u <- par("usr")
 
