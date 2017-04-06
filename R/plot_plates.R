@@ -1,7 +1,7 @@
 load("calls.RData")
 
 # colors
-maincolor <- broman::brocolors("web")["yellow"]
+maincolor <- "#FEEB96"
 bgcolor <- broman::brocolors("bg")
 fgcolor <- "white"
 dotcolor <- "white"
