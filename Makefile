@@ -6,6 +6,9 @@ berkeley2017.pdf: berkeley2017.tex Figs/intercross.pdf        \
 								   Figs/lodcurve_insulin.pdf  \
 								   Figs/xchr_fig.pdf          \
 								   Figs/plate_errors.pdf      \
+								   Figs/plate_errors_1631.png         \
+								   Figs/plate_errors_1630.png         \
+								   Figs/plate_errors_1632_n_1630.png  \
 								   Figs/eqtl_lod_1.pdf        \
 								   Figs/gve1a.pdf             \
 								   Figs/gve_scheme_1.pdf      \
