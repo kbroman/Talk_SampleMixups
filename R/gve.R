@@ -65,12 +65,24 @@ axis(side=1, at=1:3, c("BB", "BR", "RR"))
 title(xlab=paste("Genotype  at ", marker1))
 dev.off()
 
-pdf("../Figs/gve1a_nqrank.pdf", width=9, height=6.5, pointsize=12, onefile=TRUE)
-par(mar=c(4.1,5.1,0.1,0.1), fg="white", col="white", col.axis="white", col.lab=color[1],
+pdf("../Figs/gve1a_nqrank.pdf", width=10, height=6, pointsize=12, onefile=TRUE)
+par(mfrow=c(1,2))
+par(mar=c(4.1,5.1,2.6,1.6), fg="white", col="white", col.axis="white", col.lab=color[1],
+    bg=bgcolor, cex.axis=1.2, cex.lab=1.3, las=1, col.main="#FEEB96", cex.main=1.7)
+plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n",
+     xlim=c(0.75,3.25), ylim=range(y1), main="Untransformed")
+set.seed(47500621)
+u <- runif(length(y1), -0.1, 0.1)
+points(g[,1]+u, y1, lwd=2, col=color[1])
+axis(side=1, at=1:3, c("BB", "BR", "RR"))
+title(xlab=paste("Genotype  at ", marker1))
+
+
+par(mar=c(4.1,6.1,2.6,0.6), fg="white", col="white", col.axis="white", col.lab=color[1],
     bg=bgcolor, cex.axis=1.2, cex.lab=1.3, las=1)
 y1nqr <- nqrank(y1)
-plot(0, 0, type="n", xlab="", ylab=paste("expression  of ", e1), xaxt="n",
-     xlim=c(0.75,3.25), ylim=range(y1nqr))
+plot(0, 0, type="n", xlab="", ylab=paste("transformed expression  of ", e1), xaxt="n",
+     xlim=c(0.75,3.25), ylim=range(y1nqr), main="Transformed")
 set.seed(47500621)
 u <- runif(length(y1nqr), -0.1, 0.1)
 points(g[,1]+u, y1nqr, lwd=2, col=color[1])
@@ -93,6 +105,7 @@ points((g[,1]+u)[m], y1[m], bg=color[2], col="white", lwd=1, pch=21)
 axis(side=1, at=1:3, c("BB", "BR", "RR"))
 title(xlab=paste("Genotype  at ", marker1))
 dev.off()
+
 
 pdf("../Figs/gve1c.pdf", width=9, height=6.5, pointsize=12, onefile=TRUE)
 par(mar=c(4.1,5.1,0.1,0.1), fg="white", col="white", col.axis="white", col.lab=color[1],
