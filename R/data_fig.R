@@ -35,10 +35,9 @@ axis(side=3, at=u[2], labels="X", xpd=TRUE, line=-0.5)
 y <- log10( f2g$pheno$insulin[order(f2g$pheno$insulin)] )
 par(mar=c(5.1,1.8,2.6,1.8))
 
-ramp <- c(colorRampPalette(c(broman::brocolors("crayons")["Cornflower"], "white"))(128),
-          colorRampPalette(c("white",broman::brocolors("crayons")["Blush"]))(128)[-1])
+source("viridis.R")
 
-image(1, seq(along=y), rbind(y), col=ramp,
+image(1, seq(along=y), rbind(y), col=viridis_qtl(256),
       xlab="", xaxt="n", ylab="", yaxt="n")
 axis(side=2, at=seq(100, 500, by=100), label=rep("", 5))
 axis(side=3, at=mean(par("usr")[1:2]), label="phenotype",
