@@ -65,7 +65,7 @@ abline(h=u[3:4], v=u[1:2], col="white")
 dev.off()
 
 
-png("../Figs/distmatall.png", width=1500, height=1300, pointsize=36)
+png("../Figs/distmatall.png", width=2250, height=1950, pointsize=48)
 par(fg="white", col="white", col.axis="white", col.lab="white", bg=bgcolorpng)
 par(mfrow=c(2,1), mar=c(5.1,0.1,0.1,0.1))
 par(las=1, mar=c(5.1,4.1,1.1,1.1))
@@ -73,8 +73,8 @@ layout(cbind(1,2), width=c(5,1))
 image(1:nrow(totdo), 1:ncol(totdo), totdo, col=col, xlab="DNA sample", ylab="mRNA sample",
       zlim=c(0,1))
 u <- par("usr")
-abline(h=u[3:4], v=u[1:2], col="white")
-abline(h=length(id$first)+0.5, v=length(id$first)+0.5, col=bgcolorpng)
+box(col="white")
+abline(h=length(id$first)+0.4, v=length(id$first)+0.4, col=bgcolor, lwd=1)
 axis(side=1, at=1)
 axis(side=2, at=1)
 
