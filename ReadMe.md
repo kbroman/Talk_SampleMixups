@@ -1,7 +1,7 @@
 ## Talk on &ldquo;Identifying and correcting sample mix-ups in high-dimensional genetic data&rdquo;
 
 The compiled slides:
-[pdf](https://www.biostat.wisc.edu/~kbroman/presentations/anisci2013.pdf)
+[pdf](https://www.biostat.wisc.edu/~kbroman/presentations/bds2019.pdf)
 
 Also see the related paper:
 

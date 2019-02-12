@@ -1,7 +1,7 @@
 # R_OPTS: --vanilla without --no-environ
 R_OPTS=--no-save --no-restore --no-init-file --no-site-file
 
-berkeley2017.pdf: berkeley2017.tex Figs/intercross.pdf        \
+bds2019.pdf: bds2019.tex Figs/intercross.pdf        \
 								   Figs/data_fig.png          \
 								   Figs/lodcurve_insulin.pdf  \
 								   Figs/xchr_fig.pdf          \
@@ -17,7 +17,7 @@ berkeley2017.pdf: berkeley2017.tex Figs/intercross.pdf        \
 								   Figs/eve_1.pdf             \
 								   Figs/insulin_lod.pdf       \
 								   Figs/expr_swaps.pdf
-	xelatex berkeley2017
+	xelatex bds2019
 
 Figs/intercross.pdf: R/intercross_fig.R R/meiosis_func.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
@@ -59,7 +59,7 @@ Figs/expr_swaps.pdf: R/expr_swaps.R
 	cd R;R CMD BATCH $(R_OPTS) $(<F)
 
 clean:
-	rm berkeley2017.pdf berkeley2017.out berkeley2017.log berkeley2017.aux
+	rm bds2019.pdf bds2019.out bds2019.log bds2019.aux
 
-web: berkeley2017.pdf
+web: bds2019.pdf
 	scp $(<F) broman-10.biostat.wisc.edu:Website/presentations/
