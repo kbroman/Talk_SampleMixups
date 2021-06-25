@@ -3,6 +3,8 @@
 The compiled slides:
 [pdf](https://www.biostat.wisc.edu/~kbroman/presentations/bds2019.pdf)
 
+A video is at [youtube](https://youtu.be/YPd0R-LPI6U).
+
 Also see the related paper:
 
 - Broman KW, Keller MP, Broman AT, Kendziorski C, Yandell BS, Sen Ś,
